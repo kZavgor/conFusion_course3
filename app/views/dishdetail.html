@@ -1,0 +1,85 @@
+<div class="container">
+    <div class="row row-content" ng-controller="DishDetailController">
+        <div class="col-xs-12">
+            <button class="btn btn-xs btn-primary pull-right"
+                    type="button" ui-sref="app.menu">
+                Back to Menu
+            </button>
+            <div class="media">
+                <div class="media-left media-middle">
+                    <a href="#">
+                        <img class="media-object img-thumbnail" ng-src={{dish.image}}>
+                    </a>
+                </div>
+                <div class="media-body">
+                    <h2 class="media-heading">{{dish.name}}
+                        <span class="label label-danger">{{dish.label}}</span>
+                        <span class="badge">{{dish.price | currency}}</span>
+                    </h2>
+                    <p>{{dish.description}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-9 col-xs-offset-1" ng-controller="DishCommentController">
+            <h3>Customer Comments
+                <small>
+                    <label for="sortFiler">Sort by:
+                        <input type="text" id="sortFiler" ng-model="commentsFilter">
+                    </label>
+                </small>
+            </h3>
+            <ul>
+                <li class="list-unstyled">
+                    <blockquote ng-repeat="comment in dish.comments | orderBy : commentsFilter">
+                        <p>{{comment.rating}} Stars</p>
+                        <p>{{comment.comment}}</p>
+                        <footer>{{comment.author}}, {{comment.date | date}}</footer>
+                    </blockquote>
+                </li>
+                <li class="list-unstyled">
+                    <blockquote ng-show="addCommentForm.$valid && addCommentForm.$dirty">
+                        <p>{{newComment.rating}} Stars</p>
+                        <p>{{newComment.comment}}</p>
+                        <footer>{{newComment.author}}, </footer>
+                    </blockquote>
+                </li>
+            </ul>
+            <form class="form-horizontal" name="addCommentForm" ng-submit="submitComment()" novalidate>
+                <div class="form-group" ng-class="{ 'has-error' : addCommentForm.author.$error.required && !addCommentForm.author.$pristine }">
+                    <label for ="author" class="col-xs-12 col-sm-2 control-label">Your Name</label>
+                    <div class="col-xs-12 col-sm-10">
+                        <input type="text" class="form-control" id="author" name="author" ng-model-options="{ debounce: 250 }"
+                               placeholder="Enter Your Name" ng-model="newComment.author" required>
+                        <span ng-show="addCommentForm.author.$error.required && !addCommentForm.author.$pristine"
+                              class="help-block">Your Name is required.</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Number of Stars</label>
+                    <div class="col-sm-10">
+                        <div class="radio-inline" ng-repeat="i in getRatings() track by $index">
+                            <label>
+                                <input type="radio" name="rating" ng-value="$index +1"
+                                       ng-model="newComment.rating">{{$index + 1}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : addCommentForm.comments.$error.required && !addCommentForm.comments.$pristine }">
+                    <label for="comments" class="col-sm-2 control-label">Your Comments</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" id="comments" name="comments" rows="10"
+                                  ng-model="newComment.comment" ng-model-options="{ debounce: 500 }" required ></textarea>
+                        <span ng-show="addCommentForm.comments.$error.required && !addCommentForm.comments.$pristine"
+                              class="help-block">Your Comments are required.</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary" ng-disabled="addCommentForm.$invalid">Submit Comment</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
